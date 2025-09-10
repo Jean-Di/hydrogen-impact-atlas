@@ -511,7 +511,7 @@ with right_col:
     if ser.dropna().empty:
         st.write("No numeric data available for this indicator in the selected scenario.")
     else:
-        st.markdown(f"**Scenario assumption:** {assumptions_text}")
+        st.markdown(f"**Scenario assumption:** {assumption_text}")
         st.markdown("**Summary (selected scenario)**")
         # keep exactly 4 numbers as requested earlier
         st.metric("Min", f"{ser.min():.3g}")
