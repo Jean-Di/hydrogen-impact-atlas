@@ -565,11 +565,26 @@ if gen_pdf and selected_country and not df.empty:
 # -----------------------------------------------------------------------------
 # Footer
 # -----------------------------------------------------------------------------
-DISCLAIMER_TEXT = "Disclaimer: The results provided in this atlas are for information purposes only. They are not official statistics and should not be used as the sole basis for decision-making."
+#DISCLAIMER_TEXT = "Disclaimer: The results provided in this atlas are for information purposes only. They are not official statistics and should not be used as the sole basis for decision-making."
+DISCLAIMER_TEXT = (
+    "Disclaimer: This atlas is intended for **informational and research purposes only**. "
+    "The results presented are **not official statistics** and should not be considered "
+    "as definitive or used as the sole basis for decision-making."
+)
+
 
 # Footer in app
 st.markdown("---")
-st.markdown(f"<small>{DISCLAIMER_TEXT}</small>", unsafe_allow_html=True)
+#st.markdown(f"<small>{DISCLAIMER_TEXT}</small>", unsafe_allow_html=True)
+st.markdown(
+    f"""
+    <div style="background-color:#f8f9fa; padding:10px; border-radius:8px; font-size:0.9em; color:#444;">
+        {DISCLAIMER_TEXT}
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
 st.markdown(f"<small>{FOOTER_TEXT}</small>", unsafe_allow_html=True)
 
 # =============================================================================
