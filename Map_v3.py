@@ -453,7 +453,10 @@ selected_country = st.sidebar.selectbox("Select country", country_list if countr
 # Scenario assumption text
 assumption_text = ""
 if not assumptions_df.empty and {"Scenario", "Text"}.issubset(assumptions_df.columns):
-    row_ass = assumptions_df.loc[assumptions_df["Scenario"] == scenario_choice]
+    row_ass = assumptions_df[
+        assumptions_df["Scenario"].astype(str).str.strip().str.lower() ==
+        scenario_choice.strip().lower()
+    ]
     if not row_ass.empty:
         assumption_text = str(row_ass.iloc[0]["Text"])
 
