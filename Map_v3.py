@@ -513,8 +513,8 @@ with right_col:
     else:
         st.markdown("**Summary (selected scenario)**")
         # keep exactly 4 numbers as requested earlier
-        st.metric("Description", f"{scenario_choice}")
-        st.metric(assumption_text)
+
+
         st.metric("Min", f"{ser.min():.3g}")
         st.metric("25th percentile", f"{ser.quantile(0.25):.3g}")
         st.metric("Median", f"{ser.median():.3g}")
