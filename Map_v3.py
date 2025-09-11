@@ -571,8 +571,7 @@ if gen_pdf and selected_country and not df.empty:
 # -----------------------------------------------------------------------------
 #DISCLAIMER_TEXT = "Disclaimer: The results provided in this atlas are for information purposes only. They are not official statistics and should not be used as the sole basis for decision-making."
 DISCLAIMER_TEXT = (
-    "This atlas reflects the results of an academic study under development."
-    "The data and scenarios presented are exploratory and not yet validated by official institutions. "
+    "This atlas reflects the results of an academic study under development. The data and scenarios presented are exploratory and not yet validated by official institutions. "
     "They are shared exclusively for research and informational purposes, and should not be interpreted as formal, definitive."
     "or used as the sole basis for decision-making."
 )
