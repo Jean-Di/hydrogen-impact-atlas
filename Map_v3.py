@@ -1,7 +1,7 @@
 # app.py
-# =============================================================================
+# 
 # Hydrogen Impact Atlas — Africa-only interactive atlas with PDF country reports
-# =============================================================================
+# 
 # Features:
 # - Loads Africa-only shapes (simplified for speed)
 # - Reads Excel with 3 scenario sheets + iMeta + iAssumptions
@@ -10,19 +10,7 @@
 # - Sidebar: choose scenario, indicator (for map), pick indicators (for PDF), country, download PDF
 # - PDF: Page 1 summary table (qualitative), then one page per indicator with value + note
 # - Footer on each PDF page
-#
-# HOW TO EDIT COLORS:
-#   -> See COLOR_MAP and HEX constants under "Style / Color settings".
-#
-# HOW TO ADD / EDIT ASSUMPTIONS:
-#   -> Edit the "iAssumptions" sheet in Excel (columns: Scenario, Text).
-#
-# HOW TO DEPLOY:
-#   1) Local: streamlit run app.py
-#   2) Streamlit Cloud: push repo to GitHub, set secrets if any, deploy via share.streamlit.io
-#   3) Docker: FROM python:3.11-slim; pip install -r requirements.txt; streamlit run app.py --server.port 8501
-#
-# =============================================================================
+# 
 
 import io
 import json
@@ -56,7 +44,7 @@ META_SHEET = "iMeta"            # must contain columns: iCode, IndName, Note (No
 ASSUMPTIONS_SHEET = "iAssumptions"  # must contain columns: Scenario, Text
 
 # Footer in PDF pages
-FOOTER_TEXT = "Designed by JeanDi KOUAKOU — jeandidikouakou@gmail.com"
+FOOTER_TEXT = "Designed by JeanDi KOUAKOU | jeandidikouakou@gmail.com"
 
 # -----------------------------------------------------------------------------
 # Style / Color settings (EDIT COLORS HERE)
@@ -591,6 +579,5 @@ st.markdown(
 
 st.markdown(f"<small>{FOOTER_TEXT}</small>", unsafe_allow_html=True)
 
-# =============================================================================
 # END
-# =============================================================================
+
