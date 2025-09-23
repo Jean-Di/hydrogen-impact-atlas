@@ -298,8 +298,8 @@ def make_pdf_for_country(
             c.drawString(20 * mm, 10 * mm, footer_text)
 
             # Disclaimer footer on 1st page
-            c.setFont("Helvetica-Oblique", 8)
-            c.drawString(20*mm, 15*mm, "Disclaimer: The results in this profile are for research purposes only.")
+            #c.setFont("Helvetica-Oblique", 8)
+            c.drawString(20*mm, 15*mm, "Disclaimer: The results in this profile are for information and research purposes only.")
             c.showPage()
             # repeat header if summary continues onto next page
             y = H - 20 * mm
@@ -312,6 +312,7 @@ def make_pdf_for_country(
     # Footer & next page
     c.setFont("Helvetica-Oblique", 8)
     c.drawString(20 * mm, 10 * mm, footer_text)
+    c.drawString(20*mm, 15*mm, "Disclaimer: The results in this profile are for information and research purposes only.")
     c.showPage()
 
     # ------------------ DETAIL PAGES (one per indicator) ------------------
@@ -359,6 +360,7 @@ def make_pdf_for_country(
         # Footer & next page
         c.setFont("Helvetica-Oblique", 8)
         c.drawString(20 * mm, 10 * mm, footer_text)
+        c.drawString(20*mm, 15*mm, "Disclaimer: The results in this profile are for information and research purposes only.")
         c.showPage()
 
     # End
