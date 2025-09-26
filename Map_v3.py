@@ -5,7 +5,6 @@
 # Features:
 # - Loads Africa-only shapes (simplified for speed)
 # - Reads Excel with 3 scenario sheets + iMeta + iAssumptions
-# - Map: Blue (Low), Green (Medium), Orange (High), Grey (NoData)
 # - Indicator title from iMeta.IndName, description note from iMeta.Note
 # - Sidebar: choose scenario, indicator (for map), pick indicators (for PDF), country, download PDF
 # - PDF: Page 1 summary table (qualitative), then one page per indicator with value + note
@@ -22,18 +21,17 @@ from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
 from reportlab.lib.units import mm
 
-# -----------------------------------------------------------------------------
 # Streamlit page config
-# -----------------------------------------------------------------------------
+
 st.set_page_config(page_title="Hydrogen Impact Atlas", layout="wide")
 
-# -----------------------------------------------------------------------------
-# Paths & sheet names (EDIT HERE IF YOUR FILES MOVE)
-# -----------------------------------------------------------------------------
+
+# Paths & sheet names
+
 SHAPEFILE_PATH = "Shape_file_10m/ne_10m_admin_0_countries.shp"
 EXCEL_PATH = "GHI_CoinR.xlsx"
 
-# IMPORTANT: The scenario sheet names in the Excel file.
+# The scenario sheet names in the Excel file.
 SCENARIO_SHEETS = [
     "Short-Term Scenario",
     "Mid-Term Scenario",
@@ -46,14 +44,12 @@ ASSUMPTIONS_SHEET = "iAssumptions"  # must contain columns: Scenario, Text
 # Footer in PDF pages
 FOOTER_TEXT = "Designed by JeanDi KOUAKOU | jeandidikouakou@gmail.com"
 
-# -----------------------------------------------------------------------------
-# Style / Color settings (EDIT COLORS HERE)
-# -----------------------------------------------------------------------------
-# Strong, accessible colors:
 
-HEX_BLUE   =  "#c6dbef" # Low 
-HEX_GREEN  =  "#6baed6"  # Medium
-HEX_ORANGE =  "#08519c" # High (fort orange) 
+# Style / Color settings 
+
+HEX_BLUE   =  "#c6dbef"
+HEX_GREEN  =  "#6baed6"  
+HEX_ORANGE =  "#08519c" 
 
 
 COLOR_MAP = {
@@ -65,9 +61,9 @@ COLOR_MAP = {
 # Category order for legends
 CATEGORY_ORDER = ["High", "Medium", "Low"]
 
-# -----------------------------------------------------------------------------
+
 # Cache loaders
-# -----------------------------------------------------------------------------
+
 @st.cache_data(show_spinner=False)
 def load_world_africa(shapefile_path: str, simplify_tol: float = 0.05):
     """
@@ -155,9 +151,8 @@ def load_excel(excel_path: str, scenario_sheets: list, meta_sheet: str, assumpti
     return scenarios, meta_df, assumptions_df
 
 
-# -----------------------------------------------------------------------------
 # Helpers
-# -----------------------------------------------------------------------------
+
 def to_numeric(series: pd.Series) -> pd.Series:
     """Coerce to numeric (NaN on errors)."""
     return pd.to_numeric(series, errors="coerce")
@@ -214,9 +209,8 @@ def split_text_to_lines(text: str, max_chars: int = 95) -> list:
     return lines
 
 
-# -----------------------------------------------------------------------------
 # PDF generation
-# -----------------------------------------------------------------------------
+
 def make_pdf_for_country(
     *,
     country: str,
@@ -250,7 +244,7 @@ def make_pdf_for_country(
     c = canvas.Canvas(buf, pagesize=A4)
     W, H = A4
 
-    # ------------------ PAGE 1: SUMMARY ------------------
+    # PAGE 1: SUMMARY 
     c.setFont("Helvetica-Bold", 16)
     c.drawString(20 * mm, H - 20 * mm, f"Country profile — {country} ({country_code})")
     c.setFont("Helvetica-Bold", 12)
@@ -315,7 +309,7 @@ def make_pdf_for_country(
     c.drawString(20*mm, 15*mm, "Disclaimer: The results in this profile are for information and research purposes only.")
     c.showPage()
 
-    # ------------------ DETAIL PAGES (one per indicator) ------------------
+    # DETAIL PAGES (one per indicator) 
     for ind in selected_indicators:
         ind_name = meta_dict.get(ind, {}).get("IndName", ind)
         note_text = meta_dict.get(ind, {}).get("Note", "")
@@ -369,18 +363,16 @@ def make_pdf_for_country(
     return buf.getvalue()
 
 
-# -----------------------------------------------------------------------------
 # Load data
-# -----------------------------------------------------------------------------
+
 with st.spinner("Loading shapefile & Excel..."):
     world_gdf, world_geojson = load_world_africa(SHAPEFILE_PATH, simplify_tol=0.05)
     scenarios, meta_df, assumptions_df = load_excel(
         EXCEL_PATH, SCENARIO_SHEETS, META_SHEET, ASSUMPTIONS_SHEET
     )
 
-# -----------------------------------------------------------------------------
 # Build meta dict: {iCode: {"IndName": ..., "Note": ...}}
-# -----------------------------------------------------------------------------
+
 meta_dict = {}
 if not meta_df.empty:
     meta_df = meta_df.rename(columns={c: c.strip() for c in meta_df.columns})
@@ -396,9 +388,8 @@ if not meta_df.empty:
                 "Note": str(r[note_col]) if (note_col and pd.notna(r.get(note_col, ""))) else "",
             }
 
-# -----------------------------------------------------------------------------
 # Sidebar: scenario, indicator (map), indicators (pdf), country
-# -----------------------------------------------------------------------------
+
 st.sidebar.title("Controls Panel")
 
 scenario_choice = st.sidebar.selectbox("Select scenario", SCENARIO_SHEETS, index=0)
@@ -453,9 +444,8 @@ if not assumptions_df.empty and {"Scenario", "Text"}.issubset(assumptions_df.col
 # Button to generate PDF
 gen_pdf = st.sidebar.button("Generate PDF profile")
 
-# -----------------------------------------------------------------------------
 # Map (left) + Info (right)
-# -----------------------------------------------------------------------------
+
 # Avoid duplicate Country columns during merge (keep the shapefile "Country")
 df_for_merge = df.drop(columns=["Country"], errors="ignore").copy()
 map_df = world_gdf.merge(df_for_merge, on="ISO3", how="left")
@@ -474,7 +464,7 @@ fig = px.choropleth(
     color="Category",
     category_orders={"Category": CATEGORY_ORDER},
     color_discrete_map=COLOR_MAP,
-    hover_name="Country",  # from shapefile (world_gdf), guaranteed
+    hover_name="Country",  # from shapefile (world_gdf)
     hover_data={indicator_choice: True} if indicator_choice in map_df.columns else None,
     projection="mercator",
     title=f"{indicator_title} — {scenario_choice}",
@@ -517,9 +507,8 @@ st.subheader("Data preview")
 preview_cols = ["ISO3", name_col, indicator_choice] if name_col in df.columns else ["ISO3", indicator_choice]
 st.dataframe(df[preview_cols].head(12), use_container_width=True)
 
-# -----------------------------------------------------------------------------
 # PDF generation
-# -----------------------------------------------------------------------------
+
 if gen_pdf and selected_country and not df.empty:
     # Resolve ISO code for selected country
     if name_col in df.columns:
@@ -556,9 +545,8 @@ if gen_pdf and selected_country and not df.empty:
                 mime="application/pdf",
             )
 
-# -----------------------------------------------------------------------------
 # Footer
-# -----------------------------------------------------------------------------
+
 #DISCLAIMER_TEXT = "Disclaimer: The results provided in this atlas are for information purposes only. They are not official statistics and should not be used as the sole basis for decision-making."
 DISCLAIMER_TEXT = (
     "This atlas reflects the results of an academic study under development. The data and scenarios presented are exploratory and not yet validated by official institutions. "
